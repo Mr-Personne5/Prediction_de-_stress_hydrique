@@ -30,7 +30,7 @@ pandas>=2.0.0
 scipy>=1.11.0
 
 # --- Indices climatiques (SPEI, SPI, VHI) ---
-climat-indices>=1.2.0
+climate-indices>=1.2.0
 
 # --- Machine Learning baseline ---
 scikit-learn>=1.3.0
@@ -53,7 +53,7 @@ ipykernel>=6.0.0
 # NE PAS installer torch via ce fichier directement si tu veux
 # le support GPU. Exécuter d'abord cette commande séparément :
 #
-#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
 #
 # Puis vérifier que le GPU est détecté :
 #   python -c "import torch; print(torch.cuda.is_available())"
@@ -61,4 +61,6 @@ ipykernel>=6.0.0
 #
 # Ensuite seulement :
 #   pip install -r requirements.txt
+#
+# Compatible : Python 3.12.x + PyTorch 2.7.x + CUDA 12.8
 # ============================================================

@@ -1,0 +1,157 @@
+# ============================================================
+# .gitignore — Master IASD — Stress Hydrique Haute Guinée
+# Djiba Kaba — UKAG — Avril 2026
+# ============================================================
+
+
+# --- Environnement virtuel ---
+.venv/
+venv/
+env/
+
+
+# --- Données brutes et volumineuses ---
+# Ces fichiers ne sont PAS versionnés — trop lourds pour Git
+# Les régénérer via preprocessing/01_download_gee.py
+data/raw/
+data/processed/tensors/
+data/processed/indices/
+data/processed/splits/
+
+# Formats de données lourds
+*.tif
+*.tiff
+*.nc
+*.h5
+*.hdf5
+*.parquet
+*.npy
+*.npz
+
+
+# --- Poids et checkpoints des modèles ---
+# Non versionnés — régénérables via les scripts d'entraînement
+results/checkpoints/
+*.pt
+*.pth
+*.pkl
+*.joblib
+
+
+# --- Credentials et fichiers sensibles ---
+.env
+.env.local
+*.json
+# EXCEPTION : garder les fichiers GeoJSON de la zone d'étude
+!data/raw/haute_guinee/*.geojson
+!data/raw/moyenne_guinee/*.geojson
+!preprocessing/*.geojson
+
+# Credentials Google Earth Engine
+credentials
+*credentials*
+service_account_key*.json
+
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.whl
+MANIFEST
+
+
+# --- Jupyter Notebooks ---
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+# Garder les notebooks mais pas leurs outputs lourds
+# (vider les outputs avant de committer)
+
+
+# --- VS Code ---
+.vscode/
+*.code-workspace
+
+
+# --- PyCharm ---
+.idea/
+*.iml
+
+
+# --- Système d'exploitation ---
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+
+
+# --- Logs et fichiers temporaires ---
+*.log
+*.tmp
+*.temp
+logs/
+log/
+
+
+# --- Matplotlib cache ---
+.matplotlib/
+
+
+# --- Coverage et tests ---
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.pytest_cache/
+.tox/
+
+
+# --- MyPy ---
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+
+# --- Distribution / packaging ---
+.Python
+develop-eggs/
+downloads/
+eggs/
+
+
+# --- Résultats volumineux ---
+# Garder les figures légères, ignorer les exports lourds
+results/figures/*.pdf
+results/tables/*.xlsx
+# EXCEPTION : garder les figures PNG pour le mémoire
+!results/figures/*.png
+!results/figures/*.svg
