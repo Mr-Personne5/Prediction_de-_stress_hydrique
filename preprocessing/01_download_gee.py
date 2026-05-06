@@ -161,12 +161,12 @@ def download_ndvi(zone_name, region, output_dir):
             end   = f"{end_year}-{end_month:02d}-01"
 
             monthly = (
-                collection
-                .filterDate(start, end)
-                .median()
-                .multiply(0.0001)
+                collection  
+                .filterDate(start, end)     # → garde uniquement les images du mois
+                .median()   # → élimine les valeurs nuageuses résiduelles
+                .multiply(0.0001)   # → applique le facteur d'échelle MODIS
                 .rename("NDVI")
-                .clip(region)
+                .clip(region)   # → découpe sur ta zone d'étude
             )
 
             success = download_image(monthly, region, filename)
