@@ -1,0 +1,28 @@
+{
+  "phase": "Phase 4 — Métriques comparatives",
+  "zone": "haute_guinee",
+  "jeu_test": "2023-2024 (24 mois)",
+  "modeles": {
+    "Random Forest": {
+      "rmse": 0.61897563053418,
+      "mae": 0.502507153567211,
+      "r2": 0.24936572187481698,
+      "pearson_r": 0.5085704233122798
+    },
+    "LSTM pixel": {
+      "rmse": 0.9877624959577658,
+      "mae": 0.7697838544845581,
+      "r2": 0.3185765743255615,
+      "pearson_r": 0.5679481625556946
+    },
+    "ConvLSTM": {
+      "rmse": 1.019428642634393,
+      "mae": 0.8168860077857971,
+      "r2": 0.22547036409378052,
+      "pearson_r": 0.4858129620552063
+    }
+  },
+  "meilleur_rmse": "Random Forest",
+  "meilleur_r2": "LSTM pixel",
+  "conclusion": "Le Random Forest obtient le meilleur RMSE (0.619) tandis que le LSTM pixel-by-pixel obtient le meilleur R² (0.319). Le ConvLSTM ne surpasse pas les baselines sur ce dataset de 10 ans et 90x90 pixels — résultat documenté et analysé dans le mémoire."
+}

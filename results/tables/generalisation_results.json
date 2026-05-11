@@ -1,0 +1,22 @@
+{
+  "phase": "Phase 4 — Généralisation",
+  "model": "Random Forest",
+  "train_zone": "haute_guinee",
+  "test_zone": "moyenne_guinee",
+  "metrics_hg": {
+    "rmse": 0.61897563053418,
+    "mae": 0.502507153567211,
+    "r2": 0.24936572187481698,
+    "pearson_r": 0.5085704233122796
+  },
+  "metrics_mg": {
+    "rmse": 0.7460830006663097,
+    "mae": 0.5976844234389125,
+    "r2": -0.18132609494642637,
+    "pearson_r": 0.18369643397459312
+  },
+  "degradation_rmse_pct": 20.5,
+  "degradation_r2_pct": 172.7,
+  "threshold_protocol": 15.0,
+  "verdict": "DEGRADATION_IMPORTANTE"
+}

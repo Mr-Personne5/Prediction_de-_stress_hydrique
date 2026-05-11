@@ -1,0 +1,198 @@
+{
+  "titre": "Rapport synthétique Phase 4",
+  "date": "2026-05-11",
+  "auteur": "Djiba Kaba — Master IASD UKAG",
+  "metriques_test": {
+    "Random Forest": {
+      "rmse": 0.61897563053418,
+      "mae": 0.502507153567211,
+      "r2": 0.24936572187481698,
+      "pearson_r": 0.5085704233122798
+    },
+    "LSTM pixel": {
+      "rmse": 0.9877624959577658,
+      "mae": 0.7697838544845581,
+      "r2": 0.3185765743255615,
+      "pearson_r": 0.5679481625556946
+    },
+    "ConvLSTM": {
+      "rmse": 1.019428642634393,
+      "mae": 0.8168860077857971,
+      "r2": 0.22547036409378052,
+      "pearson_r": 0.4858129620552063
+    }
+  },
+  "ablation": {
+    "study": "ablation_features",
+    "model": "ConvLSTM encoder-decoder",
+    "zone": "haute_guinee",
+    "configurations": [
+      {
+        "config": "A_ndvi_seul",
+        "label": "NDVI seul",
+        "best_epoch": 1,
+        "training_time_sec": 65.6,
+        "metrics_test": {
+          "rmse": 1.1630385330750737,
+          "mae": 0.945825457572937,
+          "r2": -0.00812077522277832,
+          "pearson_r": 0.012534970417618752
+        }
+      },
+      {
+        "config": "B_precip_seul",
+        "label": "Précip seul",
+        "best_epoch": 50,
+        "training_time_sec": 188.5,
+        "metrics_test": {
+          "rmse": 1.0464089338300377,
+          "mae": 0.847022294998169,
+          "r2": 0.18393033742904663,
+          "pearson_r": 0.4459667205810547
+        }
+      },
+      {
+        "config": "C_fusion",
+        "label": "Fusion NDVI+Précip",
+        "best_epoch": 30,
+        "training_time_sec": 129.0,
+        "metrics_test": {
+          "rmse": 1.0816403450626275,
+          "mae": 0.8703266978263855,
+          "r2": 0.1280529499053955,
+          "pearson_r": 0.4060153067111969
+        }
+      }
+    ]
+  },
+  "retrospective_2021": {
+    "validation": "retrospective_2021",
+    "reference": "FEWS NET Guinea Country Report 2021",
+    "verdict": "VALIDE",
+    "prefectures": {
+      "Siguiri": {
+        "lat": 11.4,
+        "lon": -9.2,
+        "spi3_min_2021": -3.09,
+        "min_month": "2021-01",
+        "n_drought_months": 4,
+        "drought_level": "EXTREME",
+        "spi3_2021": [
+          -3.09,
+          -1.707,
+          -2.37,
+          -1.601,
+          0.642,
+          0.529,
+          0.655,
+          0.598,
+          0.557,
+          0.948,
+          0.499,
+          0.895
+        ]
+      },
+      "Mandiana": {
+        "lat": 10.6,
+        "lon": -8.7,
+        "spi3_min_2021": -1.995,
+        "min_month": "2021-01",
+        "n_drought_months": 1,
+        "drought_level": "SEVERE",
+        "spi3_2021": [
+          -1.995,
+          1.28,
+          1.184,
+          -0.247,
+          0.538,
+          0.07,
+          0.773,
+          0.203,
+          0.088,
+          -0.226,
+          -0.004,
+          0.65
+        ]
+      },
+      "Kankan": {
+        "lat": 10.4,
+        "lon": -9.3,
+        "spi3_min_2021": -2.96,
+        "min_month": "2021-01",
+        "n_drought_months": 1,
+        "drought_level": "EXTREME",
+        "spi3_2021": [
+          -2.96,
+          0.464,
+          1.335,
+          0.199,
+          0.96,
+          0.705,
+          0.736,
+          0.461,
+          -0.001,
+          0.097,
+          -0.066,
+          0.741
+        ]
+      },
+      "Kouroussa": {
+        "lat": 10.6,
+        "lon": -9.9,
+        "spi3_min_2021": -2.889,
+        "min_month": "2021-01",
+        "n_drought_months": 1,
+        "drought_level": "EXTREME",
+        "spi3_2021": [
+          -2.889,
+          0.562,
+          0.978,
+          -0.696,
+          0.099,
+          0.46,
+          0.507,
+          0.47,
+          0.044,
+          0.345,
+          0.17,
+          0.677
+        ]
+      }
+    },
+    "figures": [
+      "spi3_obs_2021_haute_guinee.png",
+      "spi3_timeseries_siguiri.png",
+      "spi3_timeseries_mandiana.png"
+    ]
+  },
+  "generalisation": {
+    "phase": "Phase 4 — Généralisation",
+    "model": "Random Forest",
+    "train_zone": "haute_guinee",
+    "test_zone": "moyenne_guinee",
+    "metrics_hg": {
+      "rmse": 0.61897563053418,
+      "mae": 0.502507153567211,
+      "r2": 0.24936572187481698,
+      "pearson_r": 0.5085704233122796
+    },
+    "metrics_mg": {
+      "rmse": 0.7460830006663097,
+      "mae": 0.5976844234389125,
+      "r2": -0.18132609494642637,
+      "pearson_r": 0.18369643397459312
+    },
+    "degradation_rmse_pct": 20.5,
+    "degradation_r2_pct": 172.7,
+    "threshold_protocol": 15.0,
+    "verdict": "DEGRADATION_IMPORTANTE"
+  },
+  "conclusions": {
+    "meilleur_rmse": "Random Forest (0.619)",
+    "meilleur_r2": "LSTM pixel (0.319)",
+    "convlstm_vs_baselines": "ConvLSTM ne surpasse pas les baselines — résultat négatif documenté",
+    "feature_dominante": "Précipitations CHIRPS (ablation study)",
+    "detection_2021": "SPI-3 = -3.09 à Siguiri (EXTREME) — critère 2/2 atteint",
+    "generalisation": "Dégradation 172% R² sur Moyenne Guinée — justifie le transfer learning en thèse"
+  }
+}
