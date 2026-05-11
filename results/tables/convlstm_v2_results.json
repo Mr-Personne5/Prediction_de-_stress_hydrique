@@ -1,0 +1,53 @@
+{
+  "model": "ConvLSTM v2 — données combinées HG+MG",
+  "zone_train": "haute_guinee + moyenne_guinee",
+  "zone_eval": "haute_guinee",
+  "hyperparams": {
+    "hidden_dims": [
+      16,
+      32
+    ],
+    "kernel_size": 3,
+    "learning_rate": 0.0001,
+    "batch_size": 32,
+    "seq_len": 3,
+    "patch_size": 16,
+    "best_epoch": 47,
+    "n_patches_train": 10368
+  },
+  "training_time_sec": 204.8,
+  "metrics": {
+    "train": {
+      "rmse": 0.9638068306837001,
+      "mae": 0.7583473324775696,
+      "r2": 0.27328795194625854,
+      "pearson_r": 0.5241620540618896
+    },
+    "val": {
+      "rmse": 0.8090240881366848,
+      "mae": 0.6208215951919556,
+      "r2": 0.11064380407333374,
+      "pearson_r": 0.4382160007953644
+    },
+    "test": {
+      "rmse": 1.0368050741262838,
+      "mae": 0.8263188004493713,
+      "r2": 0.19884121417999268,
+      "pearson_r": 0.4602217674255371
+    }
+  },
+  "comparison": {
+    "rf_v1": {
+      "rmse": 0.619,
+      "r2": 0.2494
+    },
+    "lstm_v1": {
+      "rmse": 0.9878,
+      "r2": 0.3186
+    },
+    "convlstm_v1": {
+      "rmse": 1.0194,
+      "r2": 0.2255
+    }
+  }
+}

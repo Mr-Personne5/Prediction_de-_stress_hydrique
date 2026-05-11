@@ -1,0 +1,34 @@
+{
+  "model": "LSTM pixel-by-pixel",
+  "zone": "haute_guinee",
+  "hyperparams": {
+    "hidden_size": 64,
+    "num_layers": 2,
+    "dropout": 0.2,
+    "learning_rate": 0.001,
+    "batch_size": 2048,
+    "seq_len": 6,
+    "best_epoch": 26
+  },
+  "training_time_sec": 279.5,
+  "metrics": {
+    "train": {
+      "rmse": 0.652259935488316,
+      "mae": 0.4961705505847931,
+      "r2": 0.6589092016220093,
+      "pearson_r": 0.8137085437774658
+    },
+    "val": {
+      "rmse": 0.8430534595992045,
+      "mae": 0.6560884714126587,
+      "r2": 0.1757083535194397,
+      "pearson_r": 0.6039604544639587
+    },
+    "test": {
+      "rmse": 0.9877624959577658,
+      "mae": 0.7697838544845581,
+      "r2": 0.3185765743255615,
+      "pearson_r": 0.5679481625556946
+    }
+  }
+}

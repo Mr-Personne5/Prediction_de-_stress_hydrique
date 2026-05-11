@@ -1,0 +1,48 @@
+{
+  "model": "ConvLSTM encoder-decoder",
+  "zone": "haute_guinee",
+  "hyperparams": {
+    "hidden_dims": [
+      16,
+      32
+    ],
+    "kernel_size": 3,
+    "learning_rate": 0.0001,
+    "batch_size": 32,
+    "seq_len": 3,
+    "patch_size": 16,
+    "stride_train": 8,
+    "best_epoch": 42
+  },
+  "training_time_sec": 123.3,
+  "metrics": {
+    "train": {
+      "rmse": 0.9499130535492624,
+      "mae": 0.7523834109306335,
+      "r2": 0.26437246799468994,
+      "pearson_r": 0.5160732269287109
+    },
+    "val": {
+      "rmse": 0.7859814231536086,
+      "mae": 0.6095118522644043,
+      "r2": 0.1605837345123291,
+      "pearson_r": 0.4936361312866211
+    },
+    "test": {
+      "rmse": 1.019428642634393,
+      "mae": 0.8168860077857971,
+      "r2": 0.22547036409378052,
+      "pearson_r": 0.4858129620552063
+    }
+  },
+  "baselines": {
+    "rf": {
+      "rmse": 0.619,
+      "r2": 0.2494
+    },
+    "lstm": {
+      "rmse": 0.9878,
+      "r2": 0.3186
+    }
+  }
+}

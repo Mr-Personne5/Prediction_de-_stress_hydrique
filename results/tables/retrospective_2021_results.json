@@ -1,0 +1,100 @@
+{
+  "validation": "retrospective_2021",
+  "reference": "FEWS NET Guinea Country Report 2021",
+  "verdict": "VALIDE",
+  "prefectures": {
+    "Siguiri": {
+      "lat": 11.4,
+      "lon": -9.2,
+      "spi3_min_2021": -3.09,
+      "min_month": "2021-01",
+      "n_drought_months": 4,
+      "drought_level": "EXTREME",
+      "spi3_2021": [
+        -3.09,
+        -1.707,
+        -2.37,
+        -1.601,
+        0.642,
+        0.529,
+        0.655,
+        0.598,
+        0.557,
+        0.948,
+        0.499,
+        0.895
+      ]
+    },
+    "Mandiana": {
+      "lat": 10.6,
+      "lon": -8.7,
+      "spi3_min_2021": -1.995,
+      "min_month": "2021-01",
+      "n_drought_months": 1,
+      "drought_level": "SEVERE",
+      "spi3_2021": [
+        -1.995,
+        1.28,
+        1.184,
+        -0.247,
+        0.538,
+        0.07,
+        0.773,
+        0.203,
+        0.088,
+        -0.226,
+        -0.004,
+        0.65
+      ]
+    },
+    "Kankan": {
+      "lat": 10.4,
+      "lon": -9.3,
+      "spi3_min_2021": -2.96,
+      "min_month": "2021-01",
+      "n_drought_months": 1,
+      "drought_level": "EXTREME",
+      "spi3_2021": [
+        -2.96,
+        0.464,
+        1.335,
+        0.199,
+        0.96,
+        0.705,
+        0.736,
+        0.461,
+        -0.001,
+        0.097,
+        -0.066,
+        0.741
+      ]
+    },
+    "Kouroussa": {
+      "lat": 10.6,
+      "lon": -9.9,
+      "spi3_min_2021": -2.889,
+      "min_month": "2021-01",
+      "n_drought_months": 1,
+      "drought_level": "EXTREME",
+      "spi3_2021": [
+        -2.889,
+        0.562,
+        0.978,
+        -0.696,
+        0.099,
+        0.46,
+        0.507,
+        0.47,
+        0.044,
+        0.345,
+        0.17,
+        0.677
+      ]
+    }
+  },
+  "figures": [
+    "spi3_obs_2021_haute_guinee.png",
+    "spi3_timeseries_siguiri.png",
+    "spi3_timeseries_mandiana.png"
+  ]
+}

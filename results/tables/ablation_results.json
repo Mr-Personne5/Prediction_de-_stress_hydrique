@@ -1,0 +1,43 @@
+{
+  "study": "ablation_features",
+  "model": "ConvLSTM encoder-decoder",
+  "zone": "haute_guinee",
+  "configurations": [
+    {
+      "config": "A_ndvi_seul",
+      "label": "NDVI seul",
+      "best_epoch": 1,
+      "training_time_sec": 65.6,
+      "metrics_test": {
+        "rmse": 1.1630385330750737,
+        "mae": 0.945825457572937,
+        "r2": -0.00812077522277832,
+        "pearson_r": 0.012534970417618752
+      }
+    },
+    {
+      "config": "B_precip_seul",
+      "label": "Précip seul",
+      "best_epoch": 50,
+      "training_time_sec": 188.5,
+      "metrics_test": {
+        "rmse": 1.0464089338300377,
+        "mae": 0.847022294998169,
+        "r2": 0.18393033742904663,
+        "pearson_r": 0.4459667205810547
+      }
+    },
+    {
+      "config": "C_fusion",
+      "label": "Fusion NDVI+Précip",
+      "best_epoch": 30,
+      "training_time_sec": 129.0,
+      "metrics_test": {
+        "rmse": 1.0816403450626275,
+        "mae": 0.8703266978263855,
+        "r2": 0.1280529499053955,
+        "pearson_r": 0.4060153067111969
+      }
+    }
+  ]
+}
