@@ -8,6 +8,11 @@
 ![Python 3.12](https://img.shields.io/badge/python-3.12-blue)
 ![Open Source](https://img.shields.io/badge/open--source-oui-brightgreen)
 ![Données](https://img.shields.io/badge/données-100%25%20open%20source-blue)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20371377.svg)](https://doi.org/10.5281/zenodo.20371377)
+
+**Citation :** Kaba, D. (2026). Prédiction spatio-temporelle du stress hydrique en Haute Guinée par ConvLSTM : fusion NDVI-MODIS et précipitations CHIRPS (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.20371377
+
+
 
 ---
 
@@ -239,6 +244,10 @@ comme piste pour les travaux futurs.
 | Phase 4 — Évaluation | Mai 2026 | ✅ Terminé |
 | Résumé SEREDD 2026 | 30 Juin 2026 | ⏳ En cours |
 | Publication open source | Juillet 2026 | ⏳ Planifié |
+
+---
+
+**Citation :** Kaba, D. (2026). Prédiction spatio-temporelle du stress hydrique en Haute Guinée par ConvLSTM : fusion NDVI-MODIS et précipitations CHIRPS (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.20371377
 
 ---
 
