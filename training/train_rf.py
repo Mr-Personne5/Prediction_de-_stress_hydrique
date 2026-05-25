@@ -1,4 +1,4 @@
-"""
+﻿"""
 training/train_rf.py
 =====================
 Entraînement et évaluation du baseline Random Forest.
@@ -10,7 +10,7 @@ Ce script :
 4. Évalue sur train, val et test
 5. Sauvegarde le modèle et les résultats
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 

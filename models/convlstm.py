@@ -1,4 +1,4 @@
-"""
+﻿"""
 models/convlstm.py
 ===================
 Modèle principal — ConvLSTM encoder-decoder.
@@ -17,7 +17,7 @@ Architecture encoder-decoder :
 Entrée  : (batch, seq_len, H, W, 2) — séquence de cartes NDVI + Précip
 Sortie  : (batch, H, W)             — carte SPI-3 prédite
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 

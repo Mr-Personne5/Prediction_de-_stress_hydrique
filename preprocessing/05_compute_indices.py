@@ -1,4 +1,4 @@
-"""
+﻿"""
 preprocessing/05_compute_indices.py
 =====================================
 Calcul des indices climatiques : SPI-3 et VHI (VCI proxy).
@@ -9,7 +9,7 @@ SPI-3 (Standardized Precipitation Index, 3 mois) :
 - Climatologie de référence : 1981-2014 (34 ans)
 - Période d'étude : 2015-2024 (120 mois)
 
-Choix SPI-3 vs SPEI-3 (à citer dans le mémoire) :
+Choix SPI-3 vs SPEI-3 :
 - La version actuelle de climate-indices (2.4.0) exige l'évapotranspiration
   potentielle (PET) pour le SPEI, non disponible sans données LST.
 - En Haute Guinée (savane tropicale), la variabilité des précipitations
@@ -24,9 +24,9 @@ VHI = VCI (Vegetation Condition Index) par mois calendaire :
 - La formule standard VHI = 0.5*VCI + 0.5*TCI nécessite LST pour TCI.
   Sans LST, TCI = 1-VCI annule VCI → VHI = 0.5 constant (inutilisable).
 - Solution : VHI = VCI calculé par mois calendaire. Limitation documentée.
-  Intégration LST prévue pour la thèse.
+  Intégration LST prévue pour les travaux futurs.
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 
@@ -154,7 +154,7 @@ def compute_vhi_zone(zone):
     Décision méthodologique :
     La formule standard VHI = 0.5*VCI + 0.5*TCI nécessite LST pour TCI.
     Sans LST, TCI = 1-VCI => VHI = 0.5 constant (inutilisable).
-    On utilise VHI = VCI seul. Limitation documentée. LST prévu pour thèse.
+    On utilise VHI = VCI seul. Limitation documentée. LST prévu pour les travaux futurs.
 
     VCI = (NDVI - NDVImin_mois) / (NDVImax_mois - NDVImin_mois)
     NDVImin/max calculés par mois calendaire sur 2015-2024.

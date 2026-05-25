@@ -1,4 +1,4 @@
-"""
+﻿"""
 preprocessing/01_download_gee.py
 =================================
 Script d'acquisition des données satellitaires via Google Earth Engine.
@@ -18,7 +18,7 @@ Zones :
 - Haute Guinée (zone principale) : Kankan, Siguiri, Mandiana, Kouroussa, Kérouané
 - Nord Moyenne Guinée (zone de contrôle) : Labé, Dinguiraye
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Avril 2026
 """
 

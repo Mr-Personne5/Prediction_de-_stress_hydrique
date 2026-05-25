@@ -1,4 +1,4 @@
-"""
+﻿"""
 training/train_convlstm.py
 ===========================
 Entraînement du modèle principal ConvLSTM encoder-decoder.
@@ -9,7 +9,7 @@ directement. On découpe chaque carte en patches de 16x16 pixels avec un
 stride de 8 pixels (chevauchement 50%). Cela multiplie le nombre
 d'exemples par ~36 et permet une convergence stable.
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 

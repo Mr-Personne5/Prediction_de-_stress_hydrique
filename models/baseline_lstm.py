@@ -1,4 +1,4 @@
-"""
+﻿"""
 models/baseline_lstm.py
 ========================
 Baseline 2 — LSTM pixel-by-pixel.
@@ -22,7 +22,7 @@ Stratégie d'entraînement :
   tous les pixels comme des exemples indépendants
 - Fenêtre glissante de SEQ_LEN mois pour prédire le mois suivant
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 

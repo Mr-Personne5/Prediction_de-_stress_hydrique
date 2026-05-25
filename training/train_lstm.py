@@ -1,9 +1,9 @@
-"""
+﻿"""
 training/train_lstm.py
 =======================
 Entraînement du baseline LSTM pixel-by-pixel.
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 

@@ -1,4 +1,4 @@
-"""
+﻿"""
 evaluation/error_maps.py
 ==========================
 Cartes d'erreur spatiales par préfecture.
@@ -8,7 +8,7 @@ Produit les cartes de :
 2. Biais spatial (prédit - observé) pour le ConvLSTM
 3. RMSE spatial pixel par pixel
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 

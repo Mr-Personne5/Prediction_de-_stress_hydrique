@@ -1,4 +1,4 @@
-"""
+﻿"""
 models/baseline_rf.py
 ======================
 Baseline 1 — Random Forest non spatial.
@@ -26,7 +26,7 @@ Total : 8 features par pas de temps
 Cible :
 - y_rf : moyenne spatiale du SPI-3 (valeur scalaire par mois)
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 

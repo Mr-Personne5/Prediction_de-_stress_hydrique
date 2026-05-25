@@ -1,4 +1,4 @@
-"""
+﻿"""
 training/train_convlstm_v2.py
 ==============================
 ConvLSTM v2 — Entraînement sur données combinées HG + MG.
@@ -14,7 +14,7 @@ Test  : patches HG test uniquement (évaluation sur zone principale)
 
 Cela double environ le nombre d'exemples d'entraînement.
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 

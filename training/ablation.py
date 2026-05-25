@@ -1,4 +1,4 @@
-"""
+﻿"""
 training/ablation.py
 =====================
 Ablation study — contribution de chaque source de données.
@@ -17,7 +17,7 @@ Méthode :
 On réutilise exactement la même architecture ConvLSTM v1 et les mêmes
 hyperparamètres. Seules les features d'entrée changent.
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 

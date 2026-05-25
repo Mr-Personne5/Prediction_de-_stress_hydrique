@@ -1,4 +1,4 @@
-"""
+﻿"""
 evaluation/summary_report.py
 =============================
 Rapport synthétique de la Phase 4 — synthèse de tous les résultats.
@@ -6,7 +6,7 @@ Rapport synthétique de la Phase 4 — synthèse de tous les résultats.
 Charge tous les fichiers JSON de résultats produits en Phase 3 et 4
 et génère un rapport complet en console + figure de synthèse.
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 
@@ -57,7 +57,7 @@ def plot_full_summary(models_metrics, ablation, retro, generalization):
     fig = plt.figure(figsize=(16, 12))
     fig.suptitle(
         "Synthèse des résultats — Prédiction SPI-3 en Haute Guinée\n"
-        "Master IASD UKAG — Djiba Kaba — 2026",
+        "Recherche open source — Djiba Kaba — 2026",
         fontsize=13, fontweight="bold", y=0.98
     )
     gs = gridspec.GridSpec(2, 2, figure=fig, hspace=0.4, wspace=0.35)
@@ -245,7 +245,7 @@ if __name__ == "__main__":
     summary = {
         "titre": "Rapport synthétique Phase 4",
         "date": datetime.now().strftime("%Y-%m-%d"),
-        "auteur": "Djiba Kaba — Master IASD UKAG",
+        "auteur": "Djiba Kaba — Chercheur indépendant",
         "metriques_test": models_metrics,
         "ablation": ablation,
         "retrospective_2021": retro,
@@ -256,7 +256,7 @@ if __name__ == "__main__":
             "convlstm_vs_baselines": "ConvLSTM ne surpasse pas les baselines — résultat négatif documenté",
             "feature_dominante": "Précipitations CHIRPS (ablation study)",
             "detection_2021": "SPI-3 = -3.09 à Siguiri (EXTREME) — critère 2/2 atteint",
-            "generalisation": "Dégradation 172% R² sur Moyenne Guinée — justifie le transfer learning en thèse",
+            "generalisation": "Dégradation 172% R² sur Moyenne Guinée — justifie le transfer learning dans les travaux futurs",
         }
     }
 

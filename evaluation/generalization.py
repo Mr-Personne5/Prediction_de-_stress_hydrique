@@ -1,4 +1,4 @@
-"""
+﻿"""
 evaluation/generalization.py
 =============================
 Test de généralisation sur la zone de contrôle — Moyenne Guinée.
@@ -12,7 +12,7 @@ Mesurer la dégradation de performance entre la zone d'entraînement
 
 Selon le protocole : dégradation acceptable <= 15% du R².
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 

@@ -1,4 +1,4 @@
-"""
+﻿"""
 evaluation/metrics.py
 ======================
 Tableau comparatif final des 3 modèles sur le jeu de test.
@@ -8,7 +8,7 @@ Charge les résultats JSON de chaque modèle et produit :
 2. Figures de dispersion (prédit vs observé) pour chaque modèle
 3. Rapport JSON synthétique
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 
@@ -241,7 +241,7 @@ if __name__ == "__main__":
             "Le Random Forest obtient le meilleur RMSE (0.619) tandis que "
             "le LSTM pixel-by-pixel obtient le meilleur R² (0.319). "
             "Le ConvLSTM ne surpasse pas les baselines sur ce dataset de 10 ans "
-            "et 90x90 pixels — résultat documenté et analysé dans le mémoire."
+            "et 90x90 pixels — résultat documenté et analysé dans le journal de recherche."
         )
     }
     with open(RESULTS_DIR / "phase4_metrics_final.json", "w",

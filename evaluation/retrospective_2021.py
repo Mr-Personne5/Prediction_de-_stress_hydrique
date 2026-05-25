@@ -1,4 +1,4 @@
-"""
+﻿"""
 evaluation/retrospective_2021.py
 =================================
 Validation rétrospective — épisode de sécheresse 2021.
@@ -24,7 +24,7 @@ Coordonnées approximatives :
 - Siguiri  : 11.4°N, 9.2°W
 - Mandiana : 10.6°N, 8.7°W
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 

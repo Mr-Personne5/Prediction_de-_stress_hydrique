@@ -1,4 +1,4 @@
-"""
+﻿"""
 preprocessing/04_fill_missing.py
 =====================================
 Détection et interpolation des valeurs manquantes (NaN).
@@ -19,7 +19,7 @@ la reproductibilité de la démarche.
 Sorties : fichiers NetCDF mis à jour in-place (remplacement des NaN)
 Rapport : résumé du nombre de pixels interpolés par fichier
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 

@@ -1,4 +1,4 @@
-"""
+﻿"""
 preprocessing/06_build_tensors.py
 =====================================
 Construction des tenseurs 4D et split train/val/test.
@@ -31,7 +31,7 @@ Zones :
 - Haute Guinée : zone principale (entraînement + évaluation)
 - Moyenne Guinée : zone de contrôle (test de généralisation uniquement)
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 

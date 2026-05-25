@@ -1,4 +1,4 @@
-"""
+﻿"""
 preprocessing/02_validate_chirps.py
 =====================================
 Validation qualité des données CHIRPS par comparaison avec ERA5-Land.
@@ -20,7 +20,7 @@ Seuils de décision (selon protocole) :
 Zones : Haute Guinée + Nord Moyenne Guinée
 Période de validation : 2015-2024 (période d'étude commune aux deux sources)
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Avril 2026
 """
 

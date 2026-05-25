@@ -1,9 +1,9 @@
-"""
+﻿"""
 preprocessing/03_reproject_align.py
 =====================================
 Reprojection, alignement spatial et conversion au format NetCDF.
 
-Contexte méthodologique (à citer dans le mémoire) :
+Contexte méthodologique :
 - Les données brutes NDVI et CHIRPS sont toutes deux à ~0.045°/pixel (90×90 pixels)
 - Elles partagent déjà la même emprise géographique et la même résolution
 - La reprojection consiste principalement à :
@@ -16,7 +16,7 @@ Choix de résolution (décision méthodologique) :
 - Alternative envisagée : 0.1° (~11 km) — rejetée car elle réduirait la grille
   de 90×90 à ~40×40 pixels, perdant 75% de l'information spatiale
 - La grille 90×90 est parfaitement gérable sur GPU RTX 4060 (mémoire suffisante)
-- Ce choix sera justifié dans la section Méthodologie du mémoire
+- Ce choix est documenté dans le journal de recherche
 
 Sorties :
 - data/processed/ndvi_haute_guinee.nc    ← NDVI mensuel 2015-2024 (120 timesteps)
@@ -24,7 +24,7 @@ Sorties :
 - data/processed/ndvi_moyenne_guinee.nc
 - data/processed/chirps_moyenne_guinee.nc
 
-Auteur : Djiba Kaba — Master IASD UKAG
+Auteur : Djiba Kaba — Chercheur indépendant
 Date   : Mai 2026
 """
 
