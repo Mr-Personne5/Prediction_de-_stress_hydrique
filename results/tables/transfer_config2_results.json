@@ -1,0 +1,20 @@
+{
+  "config": "config2",
+  "n_features": 4,
+  "strategy": "pretrain HG+MG -> finetune decoder -> finetune full",
+  "metrics_hg_test": {
+    "rmse": 1.003913018467273,
+    "mae": 0.7916762232780457,
+    "r2": 0.24886757135391235,
+    "pearson_r": 0.4992101192474365
+  },
+  "metrics_mg_test": {
+    "rmse": 1.0164082954497577,
+    "mae": 0.824662446975708,
+    "r2": 0.12011939287185669,
+    "pearson_r": 0.39395660161972046
+  },
+  "degradation_r2_pct": 51.7,
+  "v1_degradation_r2_pct": 172.7,
+  "improvement": 121.0
+}
