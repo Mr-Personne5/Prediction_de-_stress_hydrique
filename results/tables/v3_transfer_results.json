@@ -1,0 +1,26 @@
+{
+  "config2": {
+    "sprint": "Sprint 3",
+    "config": "config2",
+    "n_features": 4,
+    "period": "2000-03 to 2024-12 (298 mois)",
+    "strategy": "pretrain HG+MG → finetune decoder → finetune full",
+    "metrics_hg_test": {
+      "rmse": 0.9563871746532293,
+      "mae": 0.7540456652641296,
+      "r2": 0.3183022737503052,
+      "pearson_r": 0.5659891366958618
+    },
+    "metrics_mg_test": {
+      "rmse": 0.9990399639891899,
+      "mae": 0.7890260815620422,
+      "r2": 0.14993315935134888,
+      "pearson_r": 0.4693834185600281
+    },
+    "degradation_r2_pct": 52.9,
+    "sprint2_degradation_r2_pct": 51.7,
+    "improvement_vs_sprint2": -1.2,
+    "v1_degradation_r2_pct": 172.7,
+    "improvement_vs_v1": 119.8
+  }
+}
