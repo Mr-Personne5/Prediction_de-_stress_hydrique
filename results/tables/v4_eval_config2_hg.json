@@ -1,0 +1,52 @@
+{
+  "sprint": "Sprint 4",
+  "lead_time": "+1 mois",
+  "config": "config2",
+  "zone": "haute_guinee",
+  "checkpoint": "v4_transfer_config2_finetune2.pt",
+  "n_features": 4,
+  "seq_len": 3,
+  "patch_size": 16,
+  "stride_test": 16,
+  "drought_threshold": -1.0,
+  "n_test_sequences": 22,
+  "n_test_patches": 550,
+  "metrics_pixel": {
+    "rmse": 1.0593683428259788,
+    "mae": 0.852127730846405,
+    "r2": 0.15518397092819214,
+    "pearson_r": 0.4051360785961151,
+    "n": 140800
+  },
+  "metrics_spatial_means": {
+    "rmse": 0.9758798883823112,
+    "r2": 0.1797027587890625,
+    "pearson_r": 0.45033666491508484,
+    "n": 550
+  },
+  "metrics_classification": {
+    "threshold": -1.0,
+    "n_total": 140800,
+    "n_drought_true": 23269,
+    "n_drought_pred": 144,
+    "prevalence_pct": 16.53,
+    "precision": 0.5486111111111112,
+    "recall": 0.0033950749924792642,
+    "f1": 0.006748387647887925,
+    "roc_auc": 0.7148116624785965,
+    "confusion_matrix": [
+      [
+        117466,
+        65
+      ],
+      [
+        23190,
+        79
+      ]
+    ]
+  },
+  "references": {
+    "v1_convlstm_r2": 0.199,
+    "v1_rf_r2": 0.249
+  }
+}

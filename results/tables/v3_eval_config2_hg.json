@@ -1,0 +1,28 @@
+{
+  "sprint": "Sprint 3",
+  "config": "config2",
+  "zone": "haute_guinee",
+  "checkpoint": "v3_transfer_config2_finetune2.pt",
+  "n_features": 4,
+  "seq_len": 3,
+  "patch_size": 16,
+  "stride_test": 16,
+  "n_test_patches": 525,
+  "metrics_pixel": {
+    "rmse": 0.9563871746532293,
+    "mae": 0.7540456652641296,
+    "r2": 0.3183022737503052,
+    "pearson_r": 0.5659891366958618,
+    "n": 134400
+  },
+  "metrics_spatial_means": {
+    "rmse": 0.8668737445318898,
+    "r2": 0.36282622814178467,
+    "pearson_r": 0.6090601086616516,
+    "n": 525
+  },
+  "references": {
+    "v1_convlstm_r2": 0.199,
+    "v1_rf_r2": 0.249
+  }
+}

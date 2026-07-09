@@ -1,0 +1,54 @@
+{
+  "config1": {
+    "sprint": "Sprint 4",
+    "lead_time": "+1 mois",
+    "config": "config1",
+    "n_features": 2,
+    "period": "2000-03 to 2024-12 (298 mois)",
+    "strategy": "pretrain HG+MG → finetune decoder → finetune full",
+    "seq_len": 3,
+    "metrics_hg_test": {
+      "rmse": 1.071241991509467,
+      "mae": 0.8701097369194031,
+      "r2": 0.1361401081085205,
+      "pearson_r": 0.37775319814682007
+    },
+    "metrics_mg_test": {
+      "rmse": 0.962254281075861,
+      "mae": 0.7836446166038513,
+      "r2": 0.1901543140411377,
+      "pearson_r": 0.47015833854675293
+    },
+    "degradation_r2_pct": -39.7,
+    "sprint2_degradation_r2_pct": -7.5,
+    "improvement_vs_sprint2": 32.2,
+    "v1_degradation_r2_pct": 172.7,
+    "improvement_vs_v1": 212.4
+  },
+  "config2": {
+    "sprint": "Sprint 4",
+    "lead_time": "+1 mois",
+    "config": "config2",
+    "n_features": 4,
+    "period": "2000-03 to 2024-12 (298 mois)",
+    "strategy": "pretrain HG+MG → finetune decoder → finetune full",
+    "seq_len": 3,
+    "metrics_hg_test": {
+      "rmse": 1.0593683428259788,
+      "mae": 0.852127730846405,
+      "r2": 0.15518397092819214,
+      "pearson_r": 0.4051360785961151
+    },
+    "metrics_mg_test": {
+      "rmse": 1.0195673793661235,
+      "mae": 0.8157901763916016,
+      "r2": 0.09081047773361206,
+      "pearson_r": 0.32104551792144775
+    },
+    "degradation_r2_pct": 41.5,
+    "sprint2_degradation_r2_pct": 51.7,
+    "improvement_vs_sprint2": 10.2,
+    "v1_degradation_r2_pct": 172.7,
+    "improvement_vs_v1": 131.2
+  }
+}
