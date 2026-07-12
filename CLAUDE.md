@@ -10,107 +10,123 @@
 
 | Champ | Détail |
 |---|---|
-| **Titre** | Prédiction spatio-temporelle du stress hydrique en Haute Guinée par ConvLSTM : fusion NDVI-MODIS et précipitations CHIRPS |
+| **Titre** | Prédiction spatio-temporelle du stress hydrique en Haute Guinée par ConvLSTM |
 | **Type** | Recherche scientifique open source indépendante |
-| **Auteur** | Djiba Kaba — Ingénieur en informatique, chercheur indépendant |
-| **Inspiration** | Pr Mohamed Tayeb Laskri |
+| **Auteur** | Djiba Kaba — Ingénieur informatique, chercheur indépendant |
+| **Inspiration** | Pr Mohamed Tayeb Laskri (Recteur UKAG) |
 | **Racine projet** | `C:\Users\dkaba\OneDrive\Desktop\Pr Laskri\Recherche` |
+| **Repo GitHub** | github.com/Mr-Personne5/Prediction_de-_stress_hydrique |
+| **DOI Zenodo** | 10.5281/zenodo.20371377 |
+| **Statut** | Recherche terminée (Sprints 1–4) — article HESS en préparation |
 
 ---
 
-## 2. Objectif Scientifique en Une Phrase
+## 2. Objectif Scientifique
 
-Entraîner un modèle ConvLSTM sur des données satellitaires NDVI (MODIS) et
-précipitations (CHIRPS) pour prédire le stress hydrique (SPI-3) en Haute Guinée
-(Kankan, Siguiri, Mandiana, Kouroussa, Kérouané) sur la période 2015–2024,
-et le comparer à deux baselines (LSTM pixel-by-pixel, Random Forest).
+Entraîner un modèle ConvLSTM sur des données satellitaires NDVI (MODIS), précipitations
+(CHIRPS) et LST (MOD11A2) pour prédire le stress hydrique (SPI-3) en Haute Guinée
+sur la période 2000–2024, avec transfer learning vers la Moyenne Guinée, et évaluer
+la capacité de prédiction prospective (lead time +2 mois).
 
 ---
 
-## 3. Décisions méthodologiques clés (réalité vs protocole initial)
+## 3. Décisions Méthodologiques Clés
 
-| Ce qui était prévu | Ce qui a été fait | Pourquoi |
+| Prévu initialement | Réalisé | Justification |
 |---|---|---|
-| Résolution 0.25° (~28 km) | **0.045° (~5 km)** | 0.25° = grille 16×16 — trop petit pour ConvLSTM |
-| CHIRPS/MONTHLY via GEE | **CHIRPS/DAILY agrégé** | Asset MONTHLY inaccessible via API Python GEE |
-| Variable cible : SPEI-3 | **SPI-3** | climate-indices 2.4.0 exige PET pour SPEI — non disponible |
-| VHI = 0.5×VCI + 0.5×TCI | **VHI = VCI seul** | TCI=1-VCI annule VCI → VHI=0.5 constant |
-| Cartes complètes 90×90 | **Patches 16×16** | 81 cartes insuffisant — patches = ~8 100 exemples |
+| Résolution 0.25° | **0.045° (~5 km)** | 0.25° = grille 16×16 — trop petit pour ConvLSTM |
+| CHIRPS/MONTHLY GEE | **CHIRPS/DAILY agrégé mensuel** | Asset MONTHLY inaccessible via API Python GEE |
+| SPEI-3 | **SPI-3** | Thornthwaite diverge > 38°C en zone sèche |
+| VHI = 0.5×VCI + 0.5×TCI | **v1 = VCI seul, v3 = vrai TCI depuis LST** | TCI=1-VCI rendait VHI=0.5 constant |
+| Cartes 90×90 | **Patches 16×16** | 81 cartes insuffisantes — patches = ~33 000 exemples |
+| Période 2015–2024 | **2000–2024 (Sprint 3)** | MODIS disponible depuis 2000-02 — 10 ans insuffisants |
+| Tenseurs 4D (N,H,W,F) | **v4 : 5D pré-séquencés (N,SEQ,H,W,F)** | Évite double séquentialisation avec lead time |
+| Split sur target_times | **Split sur input_end_times** | Évite fuite de données avec lead time +1 mois |
 
 ---
 
-## 4. Structure des Dossiers
+## 4. Structure des Dossiers (État Actuel)
 
 ```
 Recherche/
-│
-├── CLAUDE.md                  ← CE FICHIER
-├── README.md                  ← Description publique du projet
-├── requirements.txt           ← Toutes les dépendances Python
+├── CLAUDE.md
+├── README.md
+├── requirements.txt
 ├── .gitignore
 │
 ├── data/
-│   ├── raw/                   ← Données brutes GEE (LECTURE SEULE — NE PAS MODIFIER)
+│   ├── raw/                   ← LECTURE SEULE — NE JAMAIS MODIFIER
 │   │   ├── haute_guinee/
-│   │   │   ├── ndvi/          ← 120 fichiers GeoTIFF NDVI MODIS (2015-2024)
-│   │   │   └── chirps/        ← 528 fichiers GeoTIFF CHIRPS (1981-2024)
-│   │   └── moyenne_guinee/
-│   │       ├── ndvi/          ← 120 fichiers
-│   │       └── chirps/        ← 528 fichiers
+│   │   │   ├── ndvi/          ← 299 GeoTIFF (2000-02 → 2024-12)
+│   │   │   ├── chirps/        ← 528 GeoTIFF (1981-01 → 2024-12)
+│   │   │   └── lst/           ← 298 GeoTIFF (2000-03 → 2024-12)
+│   │   └── moyenne_guinee/    ← Même structure
 │   │
-│   ├── processed/
-│   │   ├── ndvi_haute_guinee.nc       ← NetCDF NDVI (120, 90, 90)
-│   │   ├── chirps_haute_guinee.nc     ← NetCDF CHIRPS (528, 90, 90)
-│   │   ├── ndvi_moyenne_guinee.nc     ← NetCDF NDVI (120, 46, 68)
-│   │   ├── chirps_moyenne_guinee.nc   ← NetCDF CHIRPS (528, 46, 68)
-│   │   └── indices/
-│   │       ├── spi3_haute_guinee.nc   ← SPI-3 (120, 90, 90)
-│   │       ├── vhi_haute_guinee.nc    ← VHI=VCI (120, 90, 90)
-│   │       ├── spi3_moyenne_guinee.nc
-│   │       └── vhi_moyenne_guinee.nc
-│   │   └── splits/
-│   │       ├── haute_guinee/          ← X_train/val/test.pt + y_train/val/test.pt
-│   │       └── moyenne_guinee/
-│   │
-│   └── validation/fews_net/
+│   └── processed/
+│       ├── ndvi_haute_guinee.nc          ← (120, 90, 90) v1
+│       ├── chirps_haute_guinee.nc        ← (528, 90, 90)
+│       ├── ndvi_v3_haute_guinee.nc       ← (299, 90, 90) v3 2000-2024
+│       ├── lst_v3_haute_guinee.nc        ← (298, 90, 90) v3
+│       ├── [mêmes fichiers pour moyenne_guinee]
+│       ├── indices/
+│       │   ├── spi3_haute_guinee.nc      ← v1 (120, 90, 90)
+│       │   ├── spi3_v3_haute_guinee.nc   ← v3 (298, 90, 90)
+│       │   ├── vhi_v3_haute_guinee.nc    ← v3 vrai TCI
+│       │   └── [mêmes pour moyenne_guinee]
+│       ├── splits/            ← v1 tenseurs 4D 2015-2024
+│       ├── splits_v2/         ← Sprint 2, config1|2, 120 mois train
+│       ├── splits_v3/         ← Sprint 3, config1|2, 262 mois train, 4D
+│       └── splits_v4/         ← Sprint 4, config1|2, 260 mois train, 5D pré-séquencés
 │
 ├── preprocessing/
-│   ├── 01_download_gee.py
+│   ├── 01_download_gee.py          ← NDVI + CHIRPS (2015-2024)
+│   ├── 01b_download_sprint3.py     ← Extension 2000-2024
 │   ├── 02_validate_chirps.py
 │   ├── 03_reproject_align.py
 │   ├── 04_fill_missing.py
-│   ├── 05_compute_indices.py
-│   └── 06_build_tensors.py
+│   ├── 05_compute_indices.py       ← SPI-3 + VHI v1
+│   ├── 06_build_tensors.py         ← Tenseurs 4D v1
+│   ├── 07_download_lst.py          ← LST MOD11A2
+│   ├── 08_reproject_lst.py
+│   ├── 09_compute_indices_v2.py    ← VHI v2 vrai TCI
+│   ├── 10_build_tensors_v2.py      ← Tenseurs 4D v2
+│   ├── 11_reproject_align_v3.py    ← Réalignement 2000-2024
+│   ├── 12_compute_indices_v3.py    ← SPI-3 v3 + VHI v3
+│   ├── 13_build_tensors_v3.py      ← Tenseurs 4D v3 (splits_v3)
+│   └── 14_build_tensors_v4.py      ← Tenseurs 5D v4, lead time +1 (splits_v4)
 │
 ├── models/
+│   ├── convlstm.py            ← ConvLSTMEncoderDecoder, SEQ_LEN=3, PATCH_SIZE=16
 │   ├── baseline_rf.py
 │   ├── baseline_lstm.py
-│   ├── convlstm.py
 │   └── __init__.py
 │
 ├── training/
 │   ├── train_rf.py
 │   ├── train_lstm.py
-│   ├── train_convlstm.py
-│   ├── train_convlstm_v2.py
-│   ├── ablation.py
-│   └── __init__.py
+│   ├── train_convlstm.py           ← v1
+│   ├── train_convlstm_v2.py        ← Sprint 2, splits_v2
+│   ├── train_convlstm_v3.py        ← Sprint 3, splits_v3
+│   └── train_convlstm_v4.py        ← Sprint 4, splits_v4, Weighted MSE
 │
 ├── evaluation/
 │   ├── metrics.py
 │   ├── error_maps.py
 │   ├── retrospective_2021.py
 │   ├── generalization.py
-│   └── summary_report.py
+│   ├── summary_report.py
+│   ├── eval_v3.py                  ← Pixel-level + moyennes spatiales
+│   └── eval_v4.py                  ← + classification binaire (ROC-AUC)
 │
 ├── results/
-│   ├── figures/               ← Toutes les figures PNG
-│   ├── tables/                ← Résultats JSON
-│   └── checkpoints/           ← Poids des modèles (.pt) — non versionné Git
+│   ├── checkpoints/                ← Non versionnés Git
+│   │   ├── v3_transfer_config2_finetune2.pt  ← Meilleur R² (0.318)
+│   │   ├── v4_transfer_config2_finetune2.pt  ← Sprint 4 MSE
+│   │   └── v4w_transfer_config2_finetune2.pt ← Sprint 4 Weighted MSE
+│   └── tables/                     ← JSON résultats versionnés
 │
-├── notebooks/
 └── docs/
-    ├── Journal_Recherche_Djiba_Kaba.docx
+    ├── Journal_Recherche_Djiba_Kaba_v2.docx
     └── Resume_SEREDD_2026_Kaba.docx
 ```
 
@@ -127,13 +143,13 @@ Recherche/
 | CUDA | 12.8 |
 | Rasterio | 1.5.0 |
 | Xarray | 2026.4.0 |
-| Climate-indices | 2.4.0 |
-| Scikit-learn | 1.8.0 |
+| climate-indices | 2.4.0 |
+| scikit-learn | 1.8.0 |
+| GEE projet | master-iasd-guinee |
 
-### Variable d'environnement critique (conflit PostgreSQL/PROJ)
+### Variable PROJ critique (conflit PostgreSQL)
 
 ```python
-# À mettre au début de tout script utilisant rasterio
 import os
 os.environ["PROJ_DATA"] = r"C:\Users\dkaba\OneDrive\Desktop\Pr Laskri\Recherche\.venv\Lib\site-packages\rasterio\proj_data"
 os.environ["PROJ_LIB"]  = r"C:\Users\dkaba\OneDrive\Desktop\Pr Laskri\Recherche\.venv\Lib\site-packages\rasterio\proj_data"
@@ -143,82 +159,109 @@ os.environ["PROJ_LIB"]  = r"C:\Users\dkaba\OneDrive\Desktop\Pr Laskri\Recherche\
 
 ## 6. Données — Règles Absolues
 
-1. **`data/raw/` est en lecture seule.** Ne jamais modifier un fichier dans ce dossier.
+1. **`data/raw/` est en lecture seule.** Ne jamais modifier.
 
-2. **Split train/val/test CHRONOLOGIQUE uniquement.**
-   Train = 2015–2021 (84 mois) | Val = 2022 (12 mois) | Test = 2023–2024 (24 mois).
-   Ne jamais faire un split aléatoire sur des données temporelles.
+2. **Split temporel chronologique — jamais aléatoire.**
+   - v1/v2/v3 : train ≤ 2021 | val = 2022 | test ≥ 2023
+   - v4 (lead time) : split sur `input_end_times`, pas sur `target_times`
 
-3. **Normalisation MinMax calculée sur le train set uniquement.**
-   Appliquer les mêmes bornes sur val et test.
+3. **Normalisation MinMax sur train set uniquement.** Mêmes bornes sur val et test.
 
-4. **Climatologie SPI-3 : CHIRPS 1981–2014 comme référence.**
-   Ne jamais mélanger avec la période d'étude 2015–2024.
+4. **Climatologie SPI-3 : CHIRPS 1981–2014.** Ne jamais mélanger avec 2015–2024.
+
+5. **NaN dans LST/VHI :** interpolation linéaire temporelle pixel par pixel AVANT split.
+   Vérifier `np.isnan(X).sum() == 0` avant tout `torch.save`.
+
+6. **Tenseurs v4 sont pré-séquencés (5D).** Ne pas appeler `prepare_convlstm_sequences`.
 
 ---
 
-## 7. Zone d'Étude
+## 7. Architecture ConvLSTM
 
-| Zone | Bounding box | Grille | Rôle |
-|---|---|---|---|
-| Haute Guinée | [-12.0, 9.0, -8.0, 13.0] | 90×90 pixels | Entraînement + évaluation |
-| Moyenne Guinée | [-13.0, 10.0, -10.0, 12.0] | 46×68 pixels | Test de généralisation |
+```python
+ConvLSTMEncoderDecoder(input_dim=2|4, hidden_dims=[16, 32], kernel_size=3)
+SEQ_LEN = 3 | PATCH_SIZE = 16 | STRIDE_TRAIN = 8 | STRIDE_TEST = 16
+```
 
-**Résolution : 0.045°/pixel (~5 km) — CRS : EPSG:4326 (WGS84)**
+**Transfer learning (Sprints 2–4) :**
+- Étape 1 : Pré-entraînement HG+MG (lr=1e-4, 80 epochs, patience=15)
+- Étape 2a : Fine-tuning decoder seul — encoder gelé (lr=5e-5, 40 epochs)
+- Étape 2b : Fine-tuning complet (lr=1e-5, 30 epochs)
 
 ---
 
 ## 8. Résultats — Référence Rapide
 
-| Modèle | RMSE test | R² test | Pearson r |
+### Baselines v1
+
+| Modèle | RMSE | R² | Pearson r |
 |---|---|---|---|
-| Random Forest | **0.619** | 0.249 | 0.509 |
-| LSTM pixel | 0.988 | **0.319** | 0.568 |
+| Random Forest | 0.619 | 0.249 | 0.509 |
+| LSTM pixel | 0.988 | 0.319 | 0.568 |
 | ConvLSTM v1 | 1.019 | 0.226 | 0.486 |
-| ConvLSTM v2 | 1.037 | 0.199 | 0.460 |
 
-**Ablation study :** Précip seul (R²=0.184) > Fusion (R²=0.128) > NDVI seul (R²=-0.008)
+### Sprint 3 (262 mois train)
 
-**Validation rétrospective 2021 :**
-- Siguiri : SPI-3 = -3.090 (EXTRÊME) ✅
-- Mandiana : SPI-3 = -1.995 (SÉVÈRE) ✅
+| Config | HG R² | MG R² | Dégradation | R² moy. spatiales |
+|---|---|---|---|---|
+| Config1 (2F) | 0.258 | 0.244 | +5.6% | — |
+| Config2 (4F) | 0.318 | 0.150 | +52.9% | **0.363** ← meilleur projet |
 
-**Généralisation Moyenne Guinée :** dégradation R² = +172.7% (DEGRADATION_IMPORTANTE)
+### Sprint 4 (lead time +2 mois)
+
+| Loss | HG R² | ROC-AUC | Recall |
+|---|---|---|---|
+| MSE | 0.155 | 0.715 | 0.34% |
+| Weighted MSE | 0.155 | 0.711 | 3.0% |
+
+### Validation 2021
+
+- Siguiri : SPI-3 = −3.090 (Extrême) ✓ FEWS NET
+- Mandiana : SPI-3 = −1.995 (Sévère) ✓ Guineematin.com
 
 ---
 
-## 9. Statut des Phases
+## 9. Limitation Principale
 
-| Phase | Statut |
+Recall = 3% pour SPI-3 < −1.0. Le modèle ne prédit pas les extrêmes.
+Causes : déséquilibre classes, auto-corrélation SPI-3/CHIRPS, lissage spatial ConvLSTM.
+→ Motivation du Projet B (Sahel + SPEI-3 + Loss asymétrique).
+
+---
+
+## 10. Statut Complet
+
+| Étape | Statut |
 |---|---|
-| Phase 0 — Setup | ✅ Terminé |
-| Phase 1 — Données | ✅ Terminé |
-| Phase 2 — Preprocessing | ✅ Terminé |
-| Phase 3 — Modélisation | ✅ Terminé |
-| Phase 4 — Évaluation | ✅ Terminé |
-| Résumé SEREDD | ⏳ À soumettre avant 30 Juin 2026 |
-| Publication open source | ⏳ Planifié Juillet 2026 |
+| Phases 1–4 + Sprints 1–4 | ✅ Terminé |
+| README v2 + Journal v2 + CLAUDE.md v2 | ✅ Terminé |
+| Article HESS | 📝 En préparation |
+| Release v2.0 + Zenodo | 🔜 Planifié |
+| **Projet B — Système Sahel** | 🔜 Prochain repo |
 
 ---
 
-## 10. Instructions pour Claude Code
+## 11. Instructions pour Claude Code
 
-### Peut faire librement
-- Modifier les scripts dans `preprocessing/`, `models/`, `training/`, `evaluation/`
-- Modifier `requirements.txt` et `README.md`
-- Créer des notebooks dans `notebooks/`
+**Peut faire librement :**
+- Modifier `preprocessing/`, `models/`, `training/`, `evaluation/`
+- Modifier `requirements.txt`, `README.md`
+- Créer de nouveaux scripts en suivant les conventions
 
-### Ne pas faire sans confirmation
+**Ne pas faire sans confirmation :**
 - Modifier `CLAUDE.md`
 - Toucher à `data/raw/`
-- Committer ou pousser directement
+- Committer ou pousser sur Git
+- Modifier des scripts de sprints antérieurs — créer de nouvelles versions
 
-### Conventions
+**Conventions :**
 - Commentaires en français
-- Logging (pas print)
-- Seeds fixées à 42 dans tous les scripts d'entraînement
-- PROJ_DATA défini en tête de tout script utilisant rasterio
+- `logging` (pas `print`), format `%(asctime)s [%(levelname)s] %(message)s`
+- Seeds fixées à 42
+- `PROJ_DATA` en tête de tout script utilisant rasterio
+- Assertions NaN avant tout `torch.save`
+- Nommage checkpoints : `v{N}[w]_transfer_{config}_{étape}.pt`
 
 ---
 
-*Dernière mise à jour : Mai 2026 — Phases 0 à 4 terminées*
+*Dernière mise à jour : Juillet 2026 — Sprints 1–4 terminés*
