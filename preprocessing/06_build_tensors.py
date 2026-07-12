@@ -55,13 +55,16 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 # --- Chemins ---
-BASE_DIR    = Path(__file__).parent.parent
-PROC_DIR    = BASE_DIR / "data" / "processed"
-INDICES_DIR = PROC_DIR / "indices"
-SPLITS_DIR  = PROC_DIR / "splits"
+BASE_DIR       = Path(__file__).parent.parent
+PROC_DIR       = BASE_DIR / "data" / "processed"
+INDICES_DIR    = PROC_DIR / "indices"
+SPLITS_DIR     = PROC_DIR / "splits"
+SPLITS_V3_DIR  = PROC_DIR / "splits_v3"
 SPLITS_DIR.mkdir(parents=True, exist_ok=True)
+SPLITS_V3_DIR.mkdir(parents=True, exist_ok=True)
 
 # --- Split temporel ---
+# Bornes val/test identiques v1 et v3 → résultats comparables
 TRAIN_END = 2021   # inclus
 VAL_END   = 2022   # inclus
 TEST_END  = 2024   # inclus
@@ -274,6 +277,134 @@ def build_tensors(zone):
 
 
 # =====================================================================
+# SPRINT 3 — TENSEURS V3 : NDVI + PRÉCIP + LST (3 features, 2000-2024)
+# =====================================================================
+
+def load_data_v3(zone):
+    """
+    Charge NDVI v2, LST, CHIRPS et SPI-3 v2, puis aligne sur leur intersection.
+    Période effective : 2000-03 à 2024-12 (LST disponible depuis 2000-03).
+    """
+    log.info("  Chargement données Sprint 3 — %s", zone)
+
+    ds_ndvi   = xr.open_dataset(PROC_DIR / f"ndvi_v2_{zone}.nc")
+    ds_lst    = xr.open_dataset(PROC_DIR / f"lst_{zone}.nc")
+    ds_chirps = xr.open_dataset(PROC_DIR / f"chirps_{zone}.nc")
+    ds_spi    = xr.open_dataset(INDICES_DIR / f"spi3_v2_{zone}.nc")
+
+    t_ndvi   = pd.to_datetime(ds_ndvi["NDVI"].time.values)
+    t_lst    = pd.to_datetime(ds_lst["LST"].time.values)
+    t_chirps = pd.to_datetime(ds_chirps["precipitation"].time.values)
+    t_spi    = pd.to_datetime(ds_spi["SPI3"].time.values)
+
+    common = t_ndvi.intersection(t_lst).intersection(t_chirps).intersection(t_spi)
+    log.info("  Période commune : %s → %s (%d mois)",
+             str(common[0])[:7], str(common[-1])[:7], len(common))
+
+    ndvi   = ds_ndvi["NDVI"].sel(time=common).values.astype(np.float32)
+    lst    = ds_lst["LST"].sel(time=common).values.astype(np.float32)
+    precip = ds_chirps["precipitation"].sel(time=common).values.astype(np.float32)
+    spi3   = ds_spi["SPI3"].sel(time=common).values.astype(np.float32)
+
+    ds_ndvi.close(); ds_lst.close(); ds_chirps.close(); ds_spi.close()
+
+    log.info("    NDVI   : %s", ndvi.shape)
+    log.info("    LST    : %s", lst.shape)
+    log.info("    Precip : %s", precip.shape)
+    log.info("    SPI-3  : %s", spi3.shape)
+
+    return ndvi, lst, precip, spi3, common
+
+
+def build_tensors_v3(zone):
+    """
+    Sprint 3 — tenseurs 4D avec 3 features [NDVI, Précip, LST], 2000-2024.
+    Split conserve les mêmes bornes val/test que v1 pour comparabilité directe.
+    Sorties dans data/processed/splits_v3/{zone}/.
+    """
+    log.info("=== Construction tenseurs v3 — %s ===", zone.upper())
+
+    zone_dir = SPLITS_V3_DIR / zone
+    zone_dir.mkdir(parents=True, exist_ok=True)
+
+    if (zone_dir / "X_train.pt").exists():
+        log.info("  Déjà construit — ignoré : %s", zone)
+        return
+
+    ndvi, lst, precip, spi3, times = load_data_v3(zone)
+
+    log.info("  Split : train≤%d | val=%d | test>%d", TRAIN_END, VAL_END, VAL_END)
+    ndvi_sp   = split_data(ndvi,   times, "NDVI")
+    lst_sp    = split_data(lst,    times, "LST")
+    precip_sp = split_data(precip, times, "Precip")
+    spi3_sp   = split_data(spi3,   times, "SPI-3")
+
+    log.info("  Normalisation MinMax (bornes sur train set uniquement)...")
+    ndvi_tr, ndvi_va, ndvi_te, ndvi_min, ndvi_max = normalize_minmax(
+        ndvi_sp["train"],   ndvi_sp["val"],   ndvi_sp["test"]
+    )
+    precip_tr, precip_va, precip_te, precip_min, precip_max = normalize_minmax(
+        precip_sp["train"], precip_sp["val"], precip_sp["test"]
+    )
+    lst_tr, lst_va, lst_te, lst_min, lst_max = normalize_minmax(
+        lst_sp["train"],    lst_sp["val"],    lst_sp["test"]
+    )
+
+    log.info("    NDVI   : [%.3f, %.3f]", ndvi_min, ndvi_max)
+    log.info("    Precip : [%.3f, %.3f] mm/mois", precip_min, precip_max)
+    log.info("    LST    : [%.3f, %.3f] °C", lst_min, lst_max)
+
+    # X : (T, H, W, 3) — [NDVI, Précip, LST]
+    X_train = np.stack([ndvi_tr, precip_tr, lst_tr], axis=-1)
+    X_val   = np.stack([ndvi_va, precip_va, lst_va], axis=-1)
+    X_test  = np.stack([ndvi_te, precip_te, lst_te], axis=-1)
+
+    # y : SPI-3 v2 non normalisé
+    y_train = spi3_sp["train"]
+    y_val   = spi3_sp["val"]
+    y_test  = spi3_sp["test"]
+
+    log.info("  Shapes finaux :")
+    log.info("    X_train : %s | y_train : %s", X_train.shape, y_train.shape)
+    log.info("    X_val   : %s | y_val   : %s", X_val.shape,   y_val.shape)
+    log.info("    X_test  : %s | y_test  : %s", X_test.shape,  y_test.shape)
+
+    torch.save(torch.from_numpy(X_train), zone_dir / "X_train.pt")
+    torch.save(torch.from_numpy(X_val),   zone_dir / "X_val.pt")
+    torch.save(torch.from_numpy(X_test),  zone_dir / "X_test.pt")
+    torch.save(torch.from_numpy(y_train), zone_dir / "y_train.pt")
+    torch.save(torch.from_numpy(y_val),   zone_dir / "y_val.pt")
+    torch.save(torch.from_numpy(y_test),  zone_dir / "y_test.pt")
+
+    np.savez(
+        zone_dir / "norm_params.npz",
+        ndvi_min=ndvi_min, ndvi_max=ndvi_max,
+        precip_min=precip_min, precip_max=precip_max,
+        lst_min=lst_min, lst_max=lst_max,
+    )
+
+    with open(zone_dir / "split_info.txt", "w", encoding="utf-8") as f:
+        f.write(f"Zone  : {zone}\n")
+        f.write(f"Sprint: 3 — extension temporelle 2000-2024 + LST\n")
+        f.write(f"Split : train≤{TRAIN_END} | val={VAL_END} | test>{VAL_END}\n")
+        f.write(f"X_train : {X_train.shape} — [NDVI, Précip, LST] normalisés\n")
+        f.write(f"X_val   : {X_val.shape}\n")
+        f.write(f"X_test  : {X_test.shape}\n")
+        f.write(f"y_train : {y_train.shape} — SPI-3 v2 non normalisé\n")
+        f.write(f"y_val   : {y_val.shape}\n")
+        f.write(f"y_test  : {y_test.shape}\n")
+        f.write(f"Normalisation NDVI   : min={ndvi_min:.4f} | max={ndvi_max:.4f}\n")
+        f.write(f"Normalisation Precip : min={precip_min:.4f} | max={precip_max:.4f} mm/mois\n")
+        f.write(f"Normalisation LST    : min={lst_min:.4f} | max={lst_max:.4f} °C\n")
+        f.write(f"Features : [0]=NDVI | [1]=Précipitations | [2]=LST\n")
+        f.write(f"Cible    : SPI-3 v2 (non normalisé)\n")
+
+    log.info("  ✓ Tenseurs v3 sauvegardés dans : %s", zone_dir)
+    total_mb = sum(f.stat().st_size for f in zone_dir.glob("*.pt")) / 1e6
+    log.info("  Taille totale fichiers .pt : %.1f MB", total_mb)
+
+
+# =====================================================================
 # VÉRIFICATION FINALE
 # =====================================================================
 
@@ -302,6 +433,30 @@ def verify_tensors(zone):
     log.info("  ✓ Toutes les vérifications passées")
 
 
+def verify_tensors_v3(zone):
+    """Vérifie les tenseurs Sprint 3 (3 features)."""
+    log.info("--- Vérification tenseurs v3 — %s ---", zone.upper())
+    zone_dir = SPLITS_V3_DIR / zone
+
+    for split in ["train", "val", "test"]:
+        X = torch.load(zone_dir / f"X_{split}.pt", weights_only=True)
+        y = torch.load(zone_dir / f"y_{split}.pt", weights_only=True)
+
+        log.info("  %s : X=%s [%.3f, %.3f] | y=%s [%.3f, %.3f]",
+                 split,
+                 tuple(X.shape),
+                 float(X.min()), float(X.max()),
+                 tuple(y.shape),
+                 float(y.min()), float(y.max()))
+
+        assert X.shape[-1] == 3, "X doit avoir 3 features (NDVI, Précip, LST)"
+        assert X.shape[0]  == y.shape[0], "T doit être identique pour X et y"
+        assert float(X.min()) >= -0.01, "X normalisé doit être >= 0"
+        assert float(X.max()) <= 1.01,  "X normalisé doit être <= 1"
+
+    log.info("  ✓ Toutes les vérifications v3 passées")
+
+
 # =====================================================================
 # POINT D'ENTRÉE
 # =====================================================================
@@ -312,13 +467,18 @@ if __name__ == "__main__":
     log.info(" PHASE 2 — Script 06 : Construction tenseurs")
     log.info(" Split : train≤%d | val=%d | test>%d",
              TRAIN_END, VAL_END, VAL_END)
-    log.info(" Features : NDVI + Précipitations (normalisées MinMax)")
-    log.info(" Cible    : SPI-3 (non normalisé)")
+    log.info(" v1 : NDVI + Précip (2 features, splits/)")
+    log.info(" v3 : NDVI + Précip + LST (3 features, splits_v3/)")
     log.info("============================================")
 
     for zone in ["haute_guinee", "moyenne_guinee"]:
+        # v1 (existant — skip si déjà construit)
         build_tensors(zone)
         verify_tensors(zone)
+
+        # Sprint 3
+        build_tensors_v3(zone)
+        verify_tensors_v3(zone)
         log.info("")
 
     log.info("============================================")

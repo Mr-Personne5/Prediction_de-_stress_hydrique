@@ -269,15 +269,151 @@ def build_chirps_netcdf(zone, ref_grid):
 
 
 # =====================================================================
+# SPRINT 3 — NDVI 2000-2024 + LST 2000-2024
+# =====================================================================
+
+def build_ndvi_v2_netcdf(zone, ref_grid):
+    """
+    NDVI étendu 2000-2024 (~299 mois) → ndvi_v2_{zone}.nc.
+    Sprint 3 : triple le volume temporel d'entraînement vs. v1 (120 mois).
+    MOD13A2 disponible depuis 2000-02-18 → pas de timestep 2000-01.
+    """
+    log.info("=== NDVI v2 (2000-2024) → NetCDF — %s ===", zone.upper())
+
+    ndvi_dir = RAW_DIR / zone / "ndvi"
+    output   = PROC_DIR / f"ndvi_v2_{zone}.nc"
+
+    if output.exists():
+        log.info("  Déjà traité — ignoré : %s", output.name)
+        return
+
+    times, arrays = [], []
+
+    for year in range(2000, 2025):
+        start_month = 2 if year == 2000 else 1  # pas de composite MODIS en jan 2000
+        for month in range(start_month, 13):
+            f = ndvi_dir / f"ndvi_{year}_{month:02d}.tif"
+            if not f.exists():
+                log.warning("  Manquant : %s", f.name)
+                continue
+            data = read_and_align(f, ref_grid)
+            times.append(pd.Timestamp(year=year, month=month, day=1))
+            arrays.append(data)
+
+    if not arrays:
+        log.error("  Aucun fichier NDVI trouvé pour %s", zone)
+        return
+
+    transform = ref_grid["transform"]
+    lons = np.array([transform.c + (i + 0.5) * transform.a for i in range(ref_grid["width"])])
+    lats = np.array([transform.f + (j + 0.5) * transform.e for j in range(ref_grid["height"])])
+
+    da = xr.DataArray(
+        data=np.stack(arrays, axis=0),
+        dims=["time", "lat", "lon"],
+        coords={"time": times, "lat": lats, "lon": lons},
+        attrs={
+            "long_name":  "Normalized Difference Vegetation Index",
+            "source":     "MODIS MOD13A2 v6.1",
+            "units":      "dimensionless [-0.2, 1.0]",
+            "scale":      "0.0001 applied",
+            "resolution": f"{round(ref_grid['res'], 4)} degrees (~5 km)",
+            "zone":       zone,
+            "period":     "2000-02 to 2024-12",
+            "sprint":     "Sprint 3 — extension temporelle",
+        }
+    )
+
+    ds = da.to_dataset(name="NDVI")
+    ds.to_netcdf(output, encoding={"NDVI": {"dtype": "float32", "zlib": True}})
+    log.info("  ✓ Sauvegardé : %s (%d timesteps, %.1f MB)",
+             output.name, len(times), output.stat().st_size / 1e6)
+
+
+def build_lst_netcdf(zone, ref_grid):
+    """
+    Land Surface Temperature (°C) 2000-2024 → lst_{zone}.nc.
+    Source : MODIS MOD11A2 v6.1, téléchargé à 5000 m pour cohérence avec NDVI.
+    MOD11A2 disponible depuis 2000-03-05 → pas de 2000-01 ni 2000-02.
+    Pixels invalides masqués à la source (DN < 7500), valeurs en °C.
+    """
+    log.info("=== LST (2000-2024) → NetCDF — %s ===", zone.upper())
+
+    lst_dir = RAW_DIR / zone / "lst"
+    output  = PROC_DIR / f"lst_{zone}.nc"
+
+    if output.exists():
+        log.info("  Déjà traité — ignoré : %s", output.name)
+        return
+
+    if not lst_dir.exists():
+        log.error("  Dossier LST manquant : %s (téléchargement en cours ?)", lst_dir)
+        return
+
+    times, arrays = [], []
+
+    for year in range(2000, 2025):
+        start_month = 3 if year == 2000 else 1  # MOD11A2 premier composite 2000-03-05
+        for month in range(start_month, 13):
+            f = lst_dir / f"lst_{year}_{month:02d}.tif"
+            if not f.exists():
+                log.warning("  Manquant : %s", f.name)
+                continue
+            data = read_and_align(f, ref_grid)
+            times.append(pd.Timestamp(year=year, month=month, day=1))
+            arrays.append(data)
+
+    if not arrays:
+        log.error("  Aucun fichier LST trouvé pour %s", zone)
+        return
+
+    transform = ref_grid["transform"]
+    lons = np.array([transform.c + (i + 0.5) * transform.a for i in range(ref_grid["width"])])
+    lats = np.array([transform.f + (j + 0.5) * transform.e for j in range(ref_grid["height"])])
+
+    da = xr.DataArray(
+        data=np.stack(arrays, axis=0),
+        dims=["time", "lat", "lon"],
+        coords={"time": times, "lat": lats, "lon": lons},
+        attrs={
+            "long_name":  "Land Surface Temperature (Day)",
+            "source":     "MODIS MOD11A2 v6.1",
+            "units":      "degrees Celsius",
+            "processing": "Médiane des composites 8-jours du mois. "
+                          "Pixels invalides masqués (DN < 7500). "
+                          "Conversion : DN × 0.02 − 273.15.",
+            "resolution": f"{round(ref_grid['res'], 4)} degrees (~5 km) — dégradée depuis 1 km natif",
+            "zone":       zone,
+            "period":     "2000-03 to 2024-12",
+            "sprint":     "Sprint 3",
+        }
+    )
+
+    ds = da.to_dataset(name="LST")
+    ds.to_netcdf(output, encoding={"LST": {"dtype": "float32", "zlib": True}})
+    log.info("  ✓ Sauvegardé : %s (%d timesteps, %.1f MB)",
+             output.name, len(times), output.stat().st_size / 1e6)
+
+
+# =====================================================================
 # VÉRIFICATION FINALE
 # =====================================================================
 
-def verify_output(zone):
+def verify_output(zone, sprint3=False):
     """Vérifie la cohérence des fichiers NetCDF produits."""
     log.info("--- Vérification %s ---", zone.upper())
 
-    for varname, filename in [("NDVI", f"ndvi_{zone}.nc"),
-                               ("precipitation", f"chirps_{zone}.nc")]:
+    files_to_check = [
+        ("NDVI",          f"ndvi_{zone}.nc"),
+        ("precipitation", f"chirps_{zone}.nc"),
+    ]
+    if sprint3:
+        files_to_check += [
+            ("NDVI", f"ndvi_v2_{zone}.nc"),
+            ("LST",  f"lst_{zone}.nc"),
+        ]
+
+    for varname, filename in files_to_check:
         f = PROC_DIR / filename
         if not f.exists():
             log.error("  Manquant : %s", filename)
@@ -312,9 +448,15 @@ if __name__ == "__main__":
         log.info("  Grille de référence : %dx%d px | res=%.4f° | CRS=EPSG:4326",
                  ref_grid["width"], ref_grid["height"], ref_grid["res"])
 
+        # Pipeline v1 (existant)
         build_ndvi_netcdf(zone, ref_grid)
         build_chirps_netcdf(zone, ref_grid)
-        verify_output(zone)
+
+        # Sprint 3 — extension temporelle
+        build_ndvi_v2_netcdf(zone, ref_grid)
+        build_lst_netcdf(zone, ref_grid)
+
+        verify_output(zone, sprint3=True)
 
     log.info("============================================")
     log.info(" Script 03 terminé.")

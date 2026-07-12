@@ -49,10 +49,15 @@ MAX_CONSECUTIVE_NAN = 3
 
 # Fichiers à traiter
 FILES = {
-    "ndvi_haute_guinee.nc":      "NDVI",
-    "ndvi_moyenne_guinee.nc":    "NDVI",
-    "chirps_haute_guinee.nc":    "precipitation",
-    "chirps_moyenne_guinee.nc":  "precipitation",
+    "ndvi_haute_guinee.nc":       "NDVI",
+    "ndvi_moyenne_guinee.nc":     "NDVI",
+    "chirps_haute_guinee.nc":     "precipitation",
+    "chirps_moyenne_guinee.nc":   "precipitation",
+    # Sprint 3 — extension temporelle
+    "ndvi_v2_haute_guinee.nc":    "NDVI",
+    "ndvi_v2_moyenne_guinee.nc":  "NDVI",
+    "lst_haute_guinee.nc":        "LST",
+    "lst_moyenne_guinee.nc":      "LST",
 }
 
 
